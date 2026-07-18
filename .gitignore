@@ -1,0 +1,68 @@
+# ============================================
+# 1. ARCHIVOS DE PYTHON (compilados/caché)
+# ============================================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.dylib
+*.dll
+*.class
+
+# ============================================
+# 2. BASE DE DATOS (¡IMPORTANTE!)
+# ============================================
+network/db.sqlite3
+db.sqlite3
+*.sqlite3
+
+# ============================================
+# 3. PROYECTO DJANGO (archivos específicos)
+# ============================================
+network/media/
+network/staticfiles/
+network/static_collected/
+network/*.log
+network/local_settings.py
+network/.env
+network/migrations/0001_initial.py
+network/migrations/__init__.py
+
+
+
+# ============================================
+# 5. EDITORES DE CÓDIGO Y ARCHIVOS DEL SISTEMA
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ============================================
+# 6. LOGS Y ARCHIVOS TEMPORALES
+# ============================================
+*.log
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# ============================================
+# 7. VARIOS (archivos generados automáticamente)
+# ============================================
+*.egg-info/
+dist/
+build/
+*.whl
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+__pycache__/
+*.pyc
+network/network/__pycache__/settings.cpython-312.pyc
