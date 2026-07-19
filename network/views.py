@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.db.models import Count
 from .models import User, Post, Like
 
 
@@ -87,6 +88,20 @@ def post(request):
 def all_post(request):
     if request.method != 'GET':
         return JsonResponse({'error':"GET request required."}, status=400)
-    all_post = Post.objects.all()
-    return JsonResponse([post.serialize() for post in all_post], safe=False)
+    all_posts = Post.objects.all()
+    return JsonResponse([post.serialize() for post in all_posts], safe=False)
+    
+def profile(request):
+    if request.method != 'GET':
+        return JsonResponse({'error':"GET request required."}, status=400)
+    list_posts = Post.objects.filter(user = request.user)
+    info = [post.serialize() for post in list_posts ]
+    user = User.objects.annotate(followers_count=Count('followers'), following_count=Count('following')).get(id=request.user.id)
+    data = {
+        'username': user.username,
+        'followers': user.followers_count,
+        'following': user.following_count,
+    }
+    info.append(data)
+    return JsonResponse(info,safe=False)
     
