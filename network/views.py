@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import User, Post, Like
@@ -62,6 +63,8 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+        
+@login_required        
 @csrf_exempt        
 def post(request):
     if request.method != 'POST':
@@ -79,3 +82,11 @@ def post(request):
         }, status=400)
    
     return JsonResponse({"error":"Método no permitido"}, status=405)
+
+@login_required    
+def all_post(request):
+    if request.method != 'GET':
+        return JsonResponse({'error':"GET request required."}, status=400)
+    all_post = Post.objects.all()
+    return JsonResponse([post.serialize() for post in all_post], safe=False)
+    
