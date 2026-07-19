@@ -28,6 +28,7 @@ network/local_settings.py
 network/.env
 network/migrations/0001_initial.py
 network/migrations/__init__.py
+network/migrations/
 
 
 
