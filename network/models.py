@@ -24,7 +24,8 @@ class Post(models.Model):
             'id': self.id,
             'user': self.user.username,
             'body': self.body,
-            'date': self.date.strftime('%Y-%m-%d %H:%M:%S')
+            'date': self.date.strftime('%Y-%m-%d %H:%M:%S'),
+            'likes': self.likes_count
         }
         
 class Like(models.Model):
