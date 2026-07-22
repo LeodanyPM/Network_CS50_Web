@@ -89,14 +89,14 @@ def all_post(request):
     if request.method != 'GET':
         return JsonResponse({'error':"GET request required."}, status=400)
     all_posts = Post.objects.all()
-    return JsonResponse([post.serialize() for post in all_posts], safe=False)
+    return JsonResponse([post.serialize(post.user == request.user) for post in all_posts], safe=False)
 
 @login_required      
 def profile(request):
     if request.method != 'GET':
         return JsonResponse({'error':"GET request required."}, status=400)
     data = Post.objects.filter(user = request.user)
-    list_posts = [post.serialize() for post in data ]
+    list_posts = [post.serialize(True) for post in data ]
     user = User.objects.annotate(followers_count=Count('followers'), following_count=Count('following')).get(id=request.user.id)
     info = {
         'username': user.username,
@@ -112,5 +112,5 @@ def following(request):
         return JsonResponse({'error':'GET request required.'}, status=400)
     user_f = request.user.following.all()
     posts = Post.objects.filter(user__in = user_f)
-    return JsonResponse([post.serialize() for post in posts],safe=False)
+    return JsonResponse([post.serialize(False) for post in posts],safe=False)
     

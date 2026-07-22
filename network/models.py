@@ -19,13 +19,14 @@ class Post(models.Model):
     def __str__(self):
          return f"{self.user} post at {self.date}"
          
-    def serialize(self):
+    def serialize(self, is_owner):
         return {
             'id': self.id,
             'user': self.user.username,
             'body': self.body,
-            'date': self.date.strftime('%Y-%m-%d %H:%M:%S'),
-            'likes': self.likes_count
+            'date': self.date.strftime('%B %d, %Y, %I:%M %p'),
+            'likes': self.likes_count,
+            'is_owner': is_owner
         }
         
 class Like(models.Model):

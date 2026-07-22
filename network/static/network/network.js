@@ -3,15 +3,15 @@ document.addEventListener('DOMContentLoaded', function() {
   // Use buttons to toggle between views
   document.querySelector('#all_posts').addEventListener('click',(e) => {
                                              e.preventDefault();
-	                                         all_posts('all_posts');
+	                                         get_info('all_posts');
 	                                                });
   document.querySelector('#user').addEventListener('click', (e) => {
                                                                  e.preventDefault();
-	                                                             all_posts('page');
+	                                                             get_info('page');
 	                                                              });
   document.querySelector('#following').addEventListener('click',(e) => {
                                                                     e.preventDefault();
-                                                                    all_posts('following');
+                                                                    get_info('following');
 	                                                                  });
   document.querySelector('#sent_post').onclick =  function(e) {
                                                         e.preventDefault();
@@ -20,20 +20,42 @@ document.addEventListener('DOMContentLoaded', function() {
                                                          };
   
   // By default
-  all_posts('all_posts');
+  get_info('all_posts');
 });
 
-function all_posts(section){
+function get_info(section){
     const main = document.querySelector('#main');
     main.innerHTML = `${section}`;
     console.log(section);
     fetch(`/${section}`)
     .then(response => response.json())
-    .then(result => {
-                    console.log(result)
+    .then(info => {
+                    console.log(info);
+                    if (section != 'page'){
+                                        info.forEach(post => show_posts(post));
+                                        }
+                    else { 
+                          info.pop();
+                          info.forEach(post => show_posts(post) );
+                          }                    
+                    })
+    .catch(error => {
+                    console.error('Error:', error);
+                    alert('The data could not be obtained.Try again.');
                     });
     }
-
+function show_posts(post){
+                    const main = document.querySelector('#main');
+                    const one_post = document.createElement('div');
+                    one_post.className = 'border';
+                    one_post.innerHTML =`<div> <h3>${post.user}</h3> <div> ${post.date}</div></div>
+                                         ${post.is_owner ? '<button> Edit </button>' : ''}
+                                         <div>${post.body}</div>
+                                         <div>${post.likes}</div>`;
+                    main.append(one_post);
+                                        
+                     
+                     }
 function sent_post(){
     const body = document.querySelector('#post-body').value;
     fetch('/post', {
