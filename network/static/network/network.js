@@ -3,15 +3,15 @@ document.addEventListener('DOMContentLoaded', function() {
   // Use buttons to toggle between views
   document.querySelector('#all_posts').addEventListener('click',(e) => {
                                              e.preventDefault();
-	                                         all_posts('Posts');
+	                                         all_posts('all_posts');
 	                                                });
   document.querySelector('#user').addEventListener('click', (e) => {
                                                                  e.preventDefault();
-	                                                             all_posts('User');
+	                                                             all_posts('page');
 	                                                              });
   document.querySelector('#following').addEventListener('click',(e) => {
                                                                     e.preventDefault();
-                                                                    all_posts('Following');
+                                                                    all_posts('following');
 	                                                                  });
   document.querySelector('#sent_post').onclick =  function(e) {
                                                         e.preventDefault();
@@ -20,13 +20,18 @@ document.addEventListener('DOMContentLoaded', function() {
                                                          };
   
   // By default
-  all_posts('Posts');
+  all_posts('all_posts');
 });
 
 function all_posts(section){
-    const main = document.querySelector('#main')
+    const main = document.querySelector('#main');
     main.innerHTML = `${section}`;
     console.log(section);
+    fetch(`/${section}`)
+    .then(response => response.json())
+    .then(result => {
+                    console.log(result)
+                    });
     }
 
 function sent_post(){
