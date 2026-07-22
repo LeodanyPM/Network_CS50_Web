@@ -29,14 +29,13 @@ function get_info(section){
     console.log(section);
     fetch(`/${section}`)
     .then(response => response.json())
-    .then(info => {
-                    console.log(info);
+    .then(data => {
+                    console.log(data);
                     if (section != 'page'){
-                                        info.forEach(post => show_posts(post));
+                                        data.forEach(post => show_posts(post));
                                         }
                     else { 
-                          info.pop();
-                          info.forEach(post => show_posts(post) );
+                           page_user(data);
                           }                    
                     })
     .catch(error => {
@@ -56,6 +55,19 @@ function show_posts(post){
                                         
                      
                      }
+function page_user(data, visitor = false){
+                        info_user = data.pop();
+                        const main = document.querySelector('#main');
+                        const info = document.createElement('div');
+                        info.className= 'border';
+                        info.innerHTML = `<div> <strong> User: </strong> ${info_user.username}</div>
+                                          <div> <strong> Following: </strong> ${info_user.following} </div>
+                                          <div> <strong> Followers </strong> ${info_user.followers} </div>
+                                          ${visitor ? '<button class="btn btn-primary">Follow</button>' :''} `;
+                        main.append(info);                        
+                        data.forEach(post => show_posts(post));
+                        
+                        }                     
 function sent_post(){
     const body = document.querySelector('#post-body').value;
     fetch('/post', {
