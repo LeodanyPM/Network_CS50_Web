@@ -1,7 +1,22 @@
 {% extends "network/layout.html" %}
 {% load static %}
 {% block body %}
-    <div id='main'></div>
+    <div class="container-fluid">
+        <div class="row g-0">
+            <div class="col-12 col-md-4">  <!-- 4 columnas en md+ -->
+                <div id="new-post">
+                    <h3>New Post</h3>
+                    <form id="post-form">
+                        <textarea class="form-control" id="post-body" rows="3" placeholder="What's on your mind?"></textarea>
+                        <button type="submit" class="btn btn-primary mt-2">Post</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-12 col-md-8 border">  <!-- 8 columnas en md+ -->
+                <div id="main"></div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 {% block script %}
     <script src="{% static 'network/network.js' %}"></script>
