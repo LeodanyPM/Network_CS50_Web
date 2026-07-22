@@ -53,15 +53,22 @@ function show_posts(post){
                                          <div>${post.likes}</div>`;
                     main.append(one_post);
                     one_post.addEventListener('click', (e) =>{
-                                                        if(e.target.classList.contains('user_link'){
-                                                            e.preventDefault();
-                                                            const user = e.target.dataset.user_id;
-                                                            fetch(`/page/${user}')
-                                                            .then(response => response.json())
-                                                            .then(data => {});
-                                                            page_user(data, visitor = true)
-                                                            }
-                                                            }                    
+                                                         if(e.target.classList.contains('user_link')){
+                                                                                                main.innerHTML='';
+                                                                                                e.preventDefault();
+                                                                                                const user = e.target.dataset.user_id;
+                                                                                                fetch(`/page/${user}`)
+                                                                                                .then(response => response.json())
+                                                                                                .then(data => {
+                                                                                                               if(user == post.id ){
+                                                                                                                                   page_user(data);  
+                                                                                                                                     }
+                                                                                                               else {                     
+                                                                                                               page_user(data,true);}
+                                                                                                               });
+                                                            
+                                                                                                    }
+                                                            } );                   
                      
                      }
 function page_user(data, visitor = false){
