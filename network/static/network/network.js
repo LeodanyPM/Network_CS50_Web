@@ -47,12 +47,21 @@ function show_posts(post){
                     const main = document.querySelector('#main');
                     const one_post = document.createElement('div');
                     one_post.className = 'border';
-                    one_post.innerHTML =`<div> <h3>${post.user}</h3> <div> ${post.date}</div></div>
+                    one_post.innerHTML =`<div> <a href=# data-user_id=${post.id} class='user_link'  >${post.user}</a> <div> ${post.date}</div></div>
                                          ${post.is_owner ? '<button> Edit </button>' : ''}
                                          <div>${post.body}</div>
                                          <div>${post.likes}</div>`;
                     main.append(one_post);
-                                        
+                    one_post.addEventListener('click', (e) =>{
+                                                        if(e.target.classList.contains('user_link'){
+                                                            e.preventDefault();
+                                                            const user = e.target.dataset.user_id;
+                                                            fetch(`/page/${user}')
+                                                            .then(response => response.json())
+                                                            .then(data => {});
+                                                            page_user(data, visitor = true)
+                                                            }
+                                                            }                    
                      
                      }
 function page_user(data, visitor = false){
