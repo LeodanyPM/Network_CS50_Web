@@ -127,3 +127,24 @@ def following(request):
     posts = Post.objects.filter(user__in = user_f)
     return JsonResponse([post.serialize(False) for post in posts],safe=False)
     
+@csrf_exempt
+@login_required
+def follow_toggle(request, user_id):
+    if request.method not in ['POST', 'DELETE']:
+        return JsonResponse({"error": "POST or DELETE required"}, status=405)
+    
+    try:
+        user_to_follow = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "User does not exist"}, status=404)
+    
+    if user_to_follow == request.user:
+        return JsonResponse({"error": "You can't follow yourself"}, status=400)
+    
+    if request.method == 'POST':
+        request.user.following.add(user_to_follow)
+        return JsonResponse({"message": f"Now you follow {user_to_follow.username}"}, status=201)
+    
+    elif request.method == 'DELETE':
+        request.user.following.remove(user_to_follow)
+        return JsonResponse({"message": f"You unfollowed {user_to_follow.username}"}, status=200)
