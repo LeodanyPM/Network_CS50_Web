@@ -60,28 +60,27 @@ function show_posts(post){
                                                                                                 fetch(`/page/${user}`)
                                                                                                 .then(response => response.json())
                                                                                                 .then(data => {
-                                                                                                               if(user == post.id ){
-                                                                                                                                   page_user(data);  
-                                                                                                                                     }
-                                                                                                               else {                     
-                                                                                                               page_user(data,true);}
+                                                                                                               page_user(data)
                                                                                                                });
                                                             
                                                                                                     }
                                                             } );                   
                      
                      }
-function page_user(data, visitor = false){
+function page_user(data){
+                        console.log(data);
                         info_user = data.pop();
+                        console.log(info_user);
+                        console.log(data);
                         const main = document.querySelector('#main');
                         const info = document.createElement('div');
                         info.className= 'border';
                         info.innerHTML = `<div> <strong> User: </strong> ${info_user.username}</div>
                                           <div> <strong> Following: </strong> ${info_user.following} </div>
                                           <div> <strong> Followers </strong> ${info_user.followers} </div>
-                                          ${visitor ? '<button class="btn btn-primary">Follow</button>' :''} `;
+                                          ${!info_user.is_owner ? '<button class="btn btn-primary">Follow</button>' :''} `;
                         main.append(info);                        
-                        data.forEach(post => show_posts(post));
+                        data[0].forEach(post => show_posts(post));
                         
                         }                     
 function sent_post(){

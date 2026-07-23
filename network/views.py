@@ -96,7 +96,7 @@ def profile(request, id = None):
     if request.method != 'GET':
         return JsonResponse({'error':"GET request required."}, status=400)
     if id is not None:
-        data = Post.objects.filter(user__id = id)
+        posts = Post.objects.filter(user__id = id)
         user_name = User.objects.get(id=id).username
         if id == request.user.id:
             is_owner = True
@@ -104,17 +104,20 @@ def profile(request, id = None):
             is_owner = False
     else:
         user_name = request.user.username
-        data = Post.objects.filter(user = request.user)
+        posts = Post.objects.filter(user = request.user)
         is_owner = True
-    list_posts = [post.serialize(is_owner) for post in data ]
+    data = []    
+    list_posts = [post.serialize(is_owner) for post in posts ]
     user = User.objects.annotate(followers_count=Count('followers'), following_count=Count('following')).get(id=request.user.id)
     info = {
         'username': user_name,
         'followers': user.followers_count,
         'following': user.following_count,
+        'is_owner': is_owner
     }
-    list_posts.append(info)
-    return JsonResponse(list_posts,safe=False)
+    data.append(list_posts)
+    data.append(info)
+    return JsonResponse(data,safe=False)
  
 @login_required     
 def following(request):
