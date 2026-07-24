@@ -87,10 +87,11 @@ def edit_post(request):
     
     if request.method != 'POST':
         return JsonResponse({"error": "POST request required."}, status=400)
-    body = json.loads(request.body).get('body')
-    id = json.loads(request.id).get('id')
+    data = json.load(request.body)
+    body = data.get('new_body')
+    id = data.get('id')
     if body == "":
-        return JsonResponse({"error":"The post was not edited" },status=204)
+        return JsonResponse({"error":"The post was not edited" },status=400)
     post = Post.objects.get(id=id)
     if request.user.id == post.user_id:
         post.body = body

@@ -122,7 +122,22 @@ function sent_post(){
     }
 function edit_post(post, body, id){
     post.innerHTML =` <form id="edit-form">
-                          <textarea class="form-control" id="post-body" rows="3" > ${body} </textarea>
-                         <button type="submit" class="btn btn-primary mt-2" id='sent_post'>Edit</button>
-                      </form>`
+                          <textarea class="form-control" id="edit-body" rows="3" > ${body} </textarea>
+                         <button type="submit" class="btn btn-primary mt-2" id='edit_post'>Edit</button>
+                      </form>`;
+    new_body = document.querySelector('#edit-body').textContent ;  
+    document.querySelector('#edit-form').addEventListener('submit', function(e){
+                                                e.preventDefault();
+                                                console.log('Click on edit');
+                                                fetch('/edit', {
+                                                                method: 'POST',
+                                                                body: JSON.stringify({body:new_body, id:id})
+                                                                })
+                                                .then(response => response.json())
+                                                .then(result => {console.log(result)})
+                                                .catch(error => {console.error('Error:', error);
+                                                                 alert('The post could not be edit. Try again.');
+                                                                });
+                                                       }
+                                                );
     }
