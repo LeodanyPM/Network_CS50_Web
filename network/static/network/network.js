@@ -69,7 +69,7 @@ function show_posts(post){
                      }
 function page_user(data){
                         console.log(data);
-                        info_user = data.pop();
+                        info_user = data[1];
                         console.log(info_user);
                         console.log(data);
                         const main = document.querySelector('#main');
@@ -89,9 +89,13 @@ function page_user(data){
                        info.addEventListener('click', function (e) {
                                                                     if (e.target.classList.contains('btn_follow')){
                                                                                                                    console.log(`${info_user.id}`);
-                                                                                                                   fetch(`/follow/${info_user.id}`, { method: 'POST' })
+                                                                                                                   fetch(`/follow/${info_user.id}`, { method:`${info_user.relation == 'Not Following' ? 'POST': 'DELETE'}` })
                                                                                                                    .then(r => r.json())
-                                                                                                                   .then(data => console.log(data.message)); 
+                                                                                                                   .then(data => console.log(data.message));
+                                                                                                                   btn_follow = document.querySelector('.btn_follow')
+                                                                                                                   btn_follow.textContent = info_user.relation == 'Not Following'? 'Following' : 'Follow' ;
+                                                                                                                   btn_follow.className = info_user.relation == 'Not Following' ? 'btn btn-primary btn_follow' : 'btn btn-outline-primary btn_follow';
+                                                                                                                   info_user.relation = info_user.relation === 'Not Following'? 'Following' : 'Not Following' ;
                                                                                                                };
                                                                     });
                         main.append(info);                        
