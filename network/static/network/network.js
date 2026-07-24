@@ -48,7 +48,7 @@ function show_posts(post){
                     const one_post = document.createElement('div');
                     one_post.className = 'border';
                     one_post.innerHTML =`<div> <a href=# data-user_id=${post.id} class='user_link'  >${post.user}</a> <div> ${post.date}</div></div>
-                                         ${post.is_owner ? '<button> Edit </button>' : ''}
+                                         ${post.is_owner ? '<button data-post_id=${post.post_id} class="btn_edit"> Edit </button>' : ''}
                                          <div>${post.body}</div>
                                          <div>${post.likes}</div>`;
                     main.append(one_post);
@@ -63,7 +63,11 @@ function show_posts(post){
                                                                                                                page_user(data)
                                                                                                                });
                                                             
-                                                                                                    }
+                                                                                                    };
+                                                         if (e.target.classList.contains('btn_edit')) { console.log('click on edit');
+                                                                                                        e.preventDefault();
+                                                                                                        edit_post(one_post, post.body, post.post_id );
+                                                                                                        }; 
                                                             } );                   
                      
                      }
@@ -115,4 +119,10 @@ function sent_post(){
         console.error('Error:', error);
         alert('The post could not be sent. Try again.');
         });
+    }
+function edit_post(post, body, id){
+    post.innerHTML =` <form id="edit-form">
+                          <textarea class="form-control" id="post-body" rows="3" > ${body} </textarea>
+                         <button type="submit" class="btn btn-primary mt-2" id='sent_post'>Edit</button>
+                      </form>`
     }

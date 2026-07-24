@@ -83,7 +83,22 @@ def post(request):
         }, status=400)
    
     return JsonResponse({"error":"Método no permitido"}, status=405)
-
+def edit_post(request):
+    
+    if request.method != 'POST':
+        return JsonResponse({"error": "POST request required."}, status=400)
+    body = json.loads(request.body).get('body')
+    id = json.loads(request.id).get('id')
+    if body == "":
+        return JsonResponse({"error":"The post was not edited" },status=204)
+    post = Post.objects.get(id=id)
+    if request.user.id == post.user_id:
+        post.body = body
+        post.save()
+        return JsonResponse({"message": "The post was edited"}, status=201)
+    else:
+        return JsonResponse({"error": "You cannot edit other users' posts."}, status=400)    
+        
 @login_required    
 def all_post(request):
     if request.method != 'GET':

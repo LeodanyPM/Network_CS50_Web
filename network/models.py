@@ -21,6 +21,7 @@ class Post(models.Model):
          
     def serialize(self, is_owner):
         return {
+            'post_id': self.id,
             'id': self.user.id,
             'user': self.user.username,
             'body': self.body,
