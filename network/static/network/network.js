@@ -125,10 +125,11 @@ function edit_post(post, body, id){
                           <textarea class="form-control" id="edit-body" rows="3" > ${body} </textarea>
                          <button type="submit" class="btn btn-primary mt-2" id='edit_post'>Edit</button>
                       </form>`;
-    new_body = document.querySelector('#edit-body').textContent ;  
+      
     document.querySelector('#edit-form').addEventListener('submit', function(e){
                                                 e.preventDefault();
-                                                console.log('Click on edit');
+                                                const new_body = document.querySelector('#edit-body').value.trim() ;
+                                                console.log(new_body);
                                                 fetch('/edit', {
                                                                 method: 'POST',
                                                                 body: JSON.stringify({body:new_body, id:id})

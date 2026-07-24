@@ -83,12 +83,14 @@ def post(request):
         }, status=400)
    
     return JsonResponse({"error":"Método no permitido"}, status=405)
+@login_required        
+@csrf_exempt
 def edit_post(request):
     
     if request.method != 'POST':
         return JsonResponse({"error": "POST request required."}, status=400)
-    data = json.load(request.body)
-    body = data.get('new_body')
+    data = json.loads(request.body)
+    body = data.get('body')
     id = data.get('id')
     if body == "":
         return JsonResponse({"error":"The post was not edited" },status=400)
