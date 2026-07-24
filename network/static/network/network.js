@@ -78,7 +78,22 @@ function page_user(data){
                         info.innerHTML = `<div> <strong> User: </strong> ${info_user.username}</div>
                                           <div> <strong> Following: </strong> ${info_user.following} </div>
                                           <div> <strong> Followers </strong> ${info_user.followers} </div>
-                                          ${!info_user.is_owner ? '<button class="btn btn-primary">Follow</button>' :''} `;
+                                          `;
+                       if(info_user.relation != 'Self' ){
+                          const btn_follow = document.createElement('button');
+                          btn_follow.className = `${info_user.relation == 'Not Following' ? 'btn btn-outline-primary btn_follow' : 'btn btn-primary btn_follow'}`;
+                          btn_follow.textContent = `${info_user.relation == 'Not Following' ? 'Follow': 'Following'}`;
+                          info.appendChild(btn_follow);                  
+                          };                   
+                                          
+                       info.addEventListener('click', function (e) {
+                                                                    if (e.target.classList.contains('btn_follow')){
+                                                                                                                   console.log(`${info_user.id}`);
+                                                                                                                   fetch(`/follow/${info_user.id}`, { method: 'POST' })
+                                                                                                                   .then(r => r.json())
+                                                                                                                   .then(data => console.log(data.message)); 
+                                                                                                               };
+                                                                    });
                         main.append(info);                        
                         data[0].forEach(post => show_posts(post));
                         

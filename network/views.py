@@ -98,22 +98,31 @@ def profile(request, id = None):
     if id is not None:
         posts = Post.objects.filter(user__id = id)
         user_name = User.objects.get(id=id).username
+        id_user = id
         if id == request.user.id:
             is_owner = True
+            relation = 'Self'
         else:
             is_owner = False
+            if User.objects.get(id = id) in request.user.following.all():
+                relation ='Following'
+            else:
+                relation = 'Not Following'
     else:
         user_name = request.user.username
+        id_user = request.user.id
         posts = Post.objects.filter(user = request.user)
         is_owner = True
+        relation = 'Self'
     data = []    
     list_posts = [post.serialize(is_owner) for post in posts ]
     user = User.objects.annotate(followers_count=Count('followers'), following_count=Count('following')).get(id=request.user.id)
     info = {
         'username': user_name,
+        'id':id_user,
         'followers': user.followers_count,
         'following': user.following_count,
-        'is_owner': is_owner
+        'relation': relation
     }
     data.append(list_posts)
     data.append(info)
