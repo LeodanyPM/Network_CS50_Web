@@ -49,7 +49,7 @@ function show_posts(post){
                     one_post.className = 'border';
                     one_post.innerHTML =`<div> <a href=# data-user_id=${post.id} class='user_link'  >${post.user}</a> <div> ${post.date}</div></div>
                                          ${post.is_owner ? '<button data-post_id=${post.post_id} class="btn_edit"> Edit </button>' : ''}
-                                         <div>${post.body}</div>
+                                         <div class= "body">${post.body}</div>
                                          <div>${post.likes}</div>`;
                     main.append(one_post);
                     one_post.addEventListener('click', (e) =>{
@@ -66,7 +66,8 @@ function show_posts(post){
                                                                                                     };
                                                          if (e.target.classList.contains('btn_edit')) { console.log('click on edit');
                                                                                                         e.preventDefault();
-                                                                                                        edit_post(one_post, post.body, post.post_id );
+                                                                                                        e.target.style.display = 'none';
+                                                                                                        edit_post(one_post.querySelector('.body'), post.post_id, e.target);
                                                                                                         }; 
                                                             } );                   
                      
@@ -120,7 +121,8 @@ function sent_post(){
         alert('The post could not be sent. Try again.');
         });
     }
-function edit_post(post, body, id){
+function edit_post(post, id, edit_button){
+    const body = post.textContent ; 
     post.innerHTML =` <form id="edit-form">
                           <textarea class="form-control" id="edit-body" rows="3" > ${body} </textarea>
                          <button type="submit" class="btn btn-primary mt-2" id='edit_post'>Edit</button>
@@ -135,7 +137,10 @@ function edit_post(post, body, id){
                                                                 body: JSON.stringify({body:new_body, id:id})
                                                                 })
                                                 .then(response => response.json())
-                                                .then(result => {console.log(result)})
+                                                .then(result => {console.log(result);
+                                                                 edit_button.style.display = 'block';
+                                                                 post.innerHTML = result.body;
+                                                                })
                                                 .catch(error => {console.error('Error:', error);
                                                                  alert('The post could not be edit. Try again.');
                                                                 });

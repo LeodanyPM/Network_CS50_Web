@@ -98,7 +98,8 @@ def edit_post(request):
     if request.user.id == post.user_id:
         post.body = body
         post.save()
-        return JsonResponse({"message": "The post was edited"}, status=201)
+        new_data = post.serialize(True)
+        return JsonResponse(new_data, safe= False)
     else:
         return JsonResponse({"error": "You cannot edit other users' posts."}, status=400)    
         
