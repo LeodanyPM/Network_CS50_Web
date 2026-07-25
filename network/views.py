@@ -154,7 +154,8 @@ def following(request):
         return JsonResponse({'error':'GET request required.'}, status=400)
     user_f = request.user.following.all()
     posts = Post.objects.filter(user__in = user_f)
-    return JsonResponse([post.serialize(False) for post in posts],safe=False)
+    posts = posts.annotate(user_liked = Exists(Like.objects.filter(post=OuterRef('pk'), user=request.user)))
+    return JsonResponse([post.serialize(False, post.user_liked) for post in posts],safe=False)
     
 @csrf_exempt
 @login_required

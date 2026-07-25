@@ -50,7 +50,7 @@ function show_posts(post){
                     one_post.innerHTML =`<div> <a href=# data-user_id=${post.id} class='user_link'  >${post.user}</a> <div> ${post.date}</div></div>
                                          ${post.is_owner ? '<button data-post_id=${post.post_id} class="btn_edit"> Edit </button>' : ''}
                                          <div class= "body">${post.body}</div>
-                                         <button> 🤍️♥️ ${post.likes}</button>`;
+                                         <button class='btn_liked'> ${ post.user_liked ? '️♥️' : '🤍'} ${post.likes}</button>`;
                     main.append(one_post);
                     one_post.addEventListener('click', (e) =>{
                                                          if(e.target.classList.contains('user_link')){
@@ -69,6 +69,10 @@ function show_posts(post){
                                                                                                         e.target.style.display = 'none';
                                                                                                         edit_post(one_post.querySelector('.body'), post.post_id, e.target);
                                                                                                         }; 
+                                                            
+                                                         if (e.target.classList.contains('btn_liked')){
+                                                                                                        console.log('click on like');
+                                                                                                        };   
                                                             } );                   
                      
                      }
