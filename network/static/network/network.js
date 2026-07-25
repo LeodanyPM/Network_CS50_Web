@@ -50,7 +50,7 @@ function show_posts(post){
                     one_post.innerHTML =`<div> <a href=# data-user_id=${post.id} class='user_link'  >${post.user}</a> <div> ${post.date}</div></div>
                                          ${post.is_owner ? '<button data-post_id=${post.post_id} class="btn_edit"> Edit </button>' : ''}
                                          <div class= "body">${post.body}</div>
-                                         <button class='btn_liked'> ${ post.user_liked ? '️♥️' : '🤍'}${post.likes}</button>`;
+                                         <button class='btn_liked' data-liked =${ post.user_liked}> ${ post.user_liked ? '️♥️' : '🤍'} <span class="likes-count">${post.likes}</span></button>`;
                     main.append(one_post);
                     one_post.addEventListener('click', (e) =>{
                                                          if(e.target.classList.contains('user_link')){
@@ -70,9 +70,9 @@ function show_posts(post){
                                                                                                         edit_post(one_post.querySelector('.body'), post.post_id, e.target);
                                                                                                         }; 
                                                             
-                                                         if (e.target.classList.contains('btn_liked')){ 
+                                                         if (e.target.closest('.btn_liked')){ 
                                                                                                         console.log('click on like');
-                                                                                                        like_post(e.target, post.likes);
+                                                                                                        like_post(e.target.closest('.btn_liked'),post.post_id);
                                                                                                         };   
                                                             } );                   
                      
@@ -152,7 +152,37 @@ function edit_post(post, id, edit_button){
                                                        }
                                                 );
     }
-function like_post(btn_liked,likes){
-                             console.log(btn_liked);
-                             btn_liked.textContent = btn_liked.textContent == '🤍0' ? `️♥️${likes + 1}`  : `🤍${likes - 1}`;
+function like_post(button, id){
+                            const isLiked = button.dataset.liked === 'true';
+                            const countSpan = button.querySelector('.likes-count');
+                            let count = parseInt(countSpan.textContent);
+                            console.log(button);
+                            if (isLiked) {
+                                        count--;
+                                        button.dataset.liked = 'false';
+                                        button.innerHTML = `🤍 <span class="likes-count">${count}</span>`;
+                                        } 
+                            else {
+                                count++;
+                                button.dataset.liked = 'true';
+                                button.innerHTML = `♥️ <span class="likes-count">${count}</span>`;
+                                }
+                            fetch(`/like/${id}`, {method: 'POST'})
+                            .then(response => response.json())
+                            .then(data => {
+                                            const serverLiked = data.liked;
+                                            const serverCount = data.likes_count;
+                                                                                        
+                                            const currentLiked = button.dataset.liked === 'true';
+                                            const currentCount = parseInt(button.querySelector('.likes-count').textContent, 10);
+
+                                            if (serverLiked !== currentLiked || serverCount !== currentCount) {
+                                                button.dataset.liked = String(serverLiked);
+                                                button.innerHTML = `${serverLiked ? '♥️' : '🤍'} <span class="likes-count">${serverCount}</span>`;
+                                                                                                                }
+                                           })
+                            .catch(error => {
+                                            console.error('Error processing like:', error);
+                                            alert('The like could not be updated. Please try again.');
+                                            });
                              }
