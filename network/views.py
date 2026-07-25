@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator
 import json
 from django.db.models import Count,  Exists, OuterRef
 from .models import User, Post, Like
@@ -64,6 +65,25 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+
+def paginate_posts(queryset, request, posts_per_page=10):
+    paginator = Paginator(queryset, posts_per_page)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    return {
+        'page_obj': page_obj,
+        'pagination': {
+            'current_page': page_obj.number,
+            'total_pages': paginator.num_pages,
+            'has_next': page_obj.has_next(),
+            'has_previous': page_obj.has_previous(),
+            'next_page': page_obj.next_page_number() if page_obj.has_next() else None,
+            'previous_page': page_obj.previous_page_number() if page_obj.has_previous() else None,
+        }
+    }
+    
         
 @login_required        
 @csrf_exempt        
@@ -109,7 +129,12 @@ def all_post(request):
     if request.method != 'GET':
         return JsonResponse({'error':"GET request required."}, status=400)
     all_posts = Post.objects.annotate( user_liked = Exists( Like.objects.filter(post=OuterRef('pk'), user=request.user)))
-    return JsonResponse([post.serialize(post.user == request.user, post.user_liked) for post in all_posts], safe=False)
+    post_page =paginate_posts(all_posts, request)
+    serialized_posts = [post.serialize(post.user == request.user, post.user_liked) for post in post_page['page_obj']]
+    return JsonResponse({
+        'posts': serialized_posts,
+        'pagination': post_page['pagination']
+        }, safe=False)
 
 @login_required      
 def profile(request, id = None):
