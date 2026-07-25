@@ -50,7 +50,7 @@ function show_posts(post){
                     one_post.innerHTML =`<div> <a href=# data-user_id=${post.id} class='user_link'  >${post.user}</a> <div> ${post.date}</div></div>
                                          ${post.is_owner ? '<button data-post_id=${post.post_id} class="btn_edit"> Edit </button>' : ''}
                                          <div class= "body">${post.body}</div>
-                                         <div>${post.likes}</div>`;
+                                         <button> 🤍️♥️ ${post.likes}</button>`;
                     main.append(one_post);
                     one_post.addEventListener('click', (e) =>{
                                                          if(e.target.classList.contains('user_link')){

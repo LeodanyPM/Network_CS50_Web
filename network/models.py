@@ -13,13 +13,13 @@ class Post(models.Model):
     @property
     def likes_count(self):
         return self.likes.count()
-        
+       
     class Meta:
          ordering = ['-date']
     def __str__(self):
          return f"{self.user} post at {self.date}"
          
-    def serialize(self, is_owner):
+    def serialize(self, is_owner, user_liked):
         return {
             'post_id': self.id,
             'id': self.user.id,
@@ -27,7 +27,8 @@ class Post(models.Model):
             'body': self.body,
             'date': self.date.strftime('%B %d, %Y, %I:%M %p'),
             'likes': self.likes_count,
-            'is_owner': is_owner
+            'is_owner': is_owner,
+            'user_liked':user_liked
         }
         
 class Like(models.Model):

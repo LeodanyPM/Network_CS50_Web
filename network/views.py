@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 import json
-from django.db.models import Count
+from django.db.models import Count,  Exists, OuterRef
 from .models import User, Post, Like
 
 
@@ -107,8 +107,8 @@ def edit_post(request):
 def all_post(request):
     if request.method != 'GET':
         return JsonResponse({'error':"GET request required."}, status=400)
-    all_posts = Post.objects.all()
-    return JsonResponse([post.serialize(post.user == request.user) for post in all_posts], safe=False)
+    all_posts = Post.objects.annotate( user_liked = Exists( Like.objects.filter(post=OuterRef('pk'), user=request.user)))
+    return JsonResponse([post.serialize(post.user == request.user, post.user_liked) for post in all_posts], safe=False)
 
 @login_required      
 def profile(request, id = None):
@@ -133,8 +133,9 @@ def profile(request, id = None):
         posts = Post.objects.filter(user = request.user)
         is_owner = True
         relation = 'Self'
-    data = []    
-    list_posts = [post.serialize(is_owner) for post in posts ]
+    data = []
+    posts = posts.annotate(user_liked = Exists(Like.objects.filter(post=OuterRef('pk'), user = request.user)))    
+    list_posts = [post.serialize(is_owner, post.user_liked) for post in posts ]
     user = User.objects.annotate(followers_count=Count('followers'), following_count=Count('following')).get(id=request.user.id)
     info = {
         'username': user_name,
