@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -98,7 +98,8 @@ def edit_post(request):
     if request.user.id == post.user_id:
         post.body = body
         post.save()
-        new_data = post.serialize(True)
+        user_liked = Like.objects.filter(post=post, user=request.user).exists()
+        new_data = post.serialize(True,user_liked)
         return JsonResponse(new_data, safe= False)
     else:
         return JsonResponse({"error": "You cannot edit other users' posts."}, status=400)    
@@ -178,3 +179,24 @@ def follow_toggle(request, user_id):
     elif request.method == 'DELETE':
         request.user.following.remove(user_to_follow)
         return JsonResponse({"message": f"You unfollowed {user_to_follow.username}"}, status=200)
+@csrf_exempt
+@login_required
+def like(request, id):
+   if request.method not in ['POST', 'GET']:
+        return JsonResponse({"error": "POST or GET required"}, status=405)
+   user = request.user
+   try:
+        post = get_object_or_404(Post, id=id)
+   except Post.DoesNotExist:
+        return JsonResponse({"error": "Post not found"}, status=404)
+   
+   if request.method == 'POST':
+       like_obj, created = Like.objects.get_or_create(post = post, user = user)
+       if created:
+           return JsonResponse({"message": "Liked", "liked" : True, "likes_count" : post.likes_count }, status = 201)
+       else: 
+           like_obj.delete()
+           return JsonResponse({"message": "UnLiked","liked": False, "likes_count":post.likes_count}, status = 200)
+   if request.method == 'GET':
+       liked = Like.objects.filter(post = post, user = user).exists()
+       return JsonResponse({"liked":liked, "likes_count" : post.likes_count }, status = 200)
