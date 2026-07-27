@@ -160,8 +160,9 @@ def profile(request, id = None):
         is_owner = True
         relation = 'Self'
     data = []
-    posts = posts.annotate(user_liked = Exists(Like.objects.filter(post=OuterRef('pk'), user = request.user)))    
-    list_posts = [post.serialize(is_owner, post.user_liked) for post in posts ]
+    posts = posts.annotate(user_liked = Exists(Like.objects.filter(post=OuterRef('pk'), user = request.user)))
+    post_page =paginate_posts(posts, request)    
+    serialized_posts = [post.serialize(is_owner, post.user_liked) for post in post_page['page_obj'] ]
     user = User.objects.annotate(followers_count=Count('followers'), following_count=Count('following')).get(id=request.user.id)
     info = {
         'username': user_name,
@@ -170,8 +171,9 @@ def profile(request, id = None):
         'following': user.following_count,
         'relation': relation
     }
-    data.append(list_posts)
+    data.append(serialized_posts)
     data.append(info)
+    data.append(post_page['pagination'])
     return JsonResponse(data,safe=False)
  
 @login_required     
@@ -181,7 +183,12 @@ def following(request):
     user_f = request.user.following.all()
     posts = Post.objects.filter(user__in = user_f)
     posts = posts.annotate(user_liked = Exists(Like.objects.filter(post=OuterRef('pk'), user=request.user)))
-    return JsonResponse([post.serialize(False, post.user_liked) for post in posts],safe=False)
+    post_page = paginate_posts(posts, request)
+    serialized_posts = [post.serialize(False, post.user_liked) for post in post_page['page_obj']]
+    return JsonResponse({
+        'posts': serialized_posts,
+        'pagination': post_page['pagination']
+        },safe=False)
     
 @csrf_exempt
 @login_required

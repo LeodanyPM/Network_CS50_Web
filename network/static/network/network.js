@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-  // Use buttons to toggle between views
+  
   document.querySelector('#all_posts').addEventListener('click',(e) => {
                                              e.preventDefault();
 	                                         get_info('all_posts');
@@ -19,23 +19,26 @@ document.addEventListener('DOMContentLoaded', function() {
                                                         sent_post()
                                                          };
   
-  // By default
+ 
   get_info('all_posts');
 });
 
-function get_info(section){
+function get_info(section, page=1){
     const main = document.querySelector('#main');
     main.innerHTML = `${section}`;
     console.log(section);
-    fetch(`/${section}`)
+    
+    fetch(`/${section}?page=${page}`)
     .then(response => response.json())
     .then(data => {
                     console.log(data);
                     if (section != 'page'){
-                                        data.forEach(post => show_posts(post));
+                                        data.posts.forEach(post => show_posts(post));
+                                        pagination(section, data.pagination);
                                         }
                     else { 
                            page_user(data);
+                            pagination(section, data[2]);
                           }                    
                     })
     .catch(error => {
@@ -186,3 +189,27 @@ function like_post(button, id){
                                             alert('The like could not be updated. Please try again.');
                                             });
                              }
+function pagination(section, info_page) {
+                    const  div_pagination = document.querySelector('#pagination');
+                    div_pagination.innerHTML = '';
+                    
+                    const ul = document.createElement('ul');
+                    ul.className = 'pagination justify-content-center';
+                    ul.innerHTML = `  <li class = "${info_page.has_previous ? 'page-item' : 'page-item disabled'}"> <a class='page-link previous' href='#'>Previous </a></li>
+                                      <li class = "${info_page.has_next ? 'page-item' : 'page-item disabled'}"> <a class='page-link next' href='#'> Next </a></li>`;
+                    div_pagination.append(ul);
+                    div_pagination.style.display = info_page.total_pages > 1 ? 'block' : 'none' ;
+                    ul.addEventListener('click', (e) => {
+                                                        e.preventDefault();
+                                                        if(e.target.closest('.previous')){
+                                                                                                   get_info(section, info_page.previous_page);
+                                                                                                   console.log('click previous');
+                                                                                                    };
+                                                        if(e.target.closest('.next')){
+                                                                                                   get_info(section, info_page.next_page); 
+                                                                                                   console.log('click next');
+                                                                                                    };                                           
+                                                        } )     
+                        }
+                         
+                                                 
