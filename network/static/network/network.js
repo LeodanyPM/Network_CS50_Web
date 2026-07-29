@@ -3,22 +3,34 @@ document.addEventListener('DOMContentLoaded', function() {
   
   document.querySelector('#all_posts').addEventListener('click',(e) => {
                                              e.preventDefault();
+                                             document.querySelector('#post-form').style.display='block';
 	                                         get_info('all_posts');
 	                                                });
-  document.querySelector('#user').addEventListener('click', (e) => {
+  document.addEventListener('click', (e) => {
+                                            const userLink = e.target.closest('#user');
+                                            if(userLink){
                                                                  e.preventDefault();
+                                                                 document.querySelector('#post-form').style.display='none';
 	                                                             get_info('page');
-	                                                              });
-  document.querySelector('#following').addEventListener('click',(e) => {
+	                                                      }
+                                            });
+  document.addEventListener('click',(e) => {
+                                            const followingLink = e.target.closest('#following');
+                                            if (followingLink){
                                                                     e.preventDefault();
+                                                                    document.querySelector('#post-form').style.display='none';
                                                                     get_info('following');
-	                                                                  });
-  document.querySelector('#sent_post').onclick =  function(e) {
+	                                                           }       
+                                            });
+  const sent_post_btn = document.querySelector('#sent_post')
+  if(sent_post_btn){
+                   sent_post_btn.onclick =  function(e) {
                                                         e.preventDefault();
                                                         console.log('Click en post');
-                                                        sent_post()
-                                                         };
-  
+                                                        sent_post();
+                                                        get_info('all_posts');
+                                                        };
+                    };
  
   get_info('all_posts');
 });
@@ -38,7 +50,7 @@ function get_info(section, page=1){
                                         }
                     else { 
                            page_user(data);
-                            pagination(section, data[2]);
+                           pagination(section, data[2]);
                           }                    
                     })
     .catch(error => {
@@ -73,7 +85,7 @@ function show_posts(post){
                                                                                                         edit_post(one_post.querySelector('.body'), post.post_id, e.target);
                                                                                                         }; 
                                                             
-                                                         if (e.target.closest('.btn_liked')){ 
+                                                         if (e.target.closest('.btn_liked') &&  document.querySelector('#user') ){ 
                                                                                                         console.log('click on like');
                                                                                                         like_post(e.target.closest('.btn_liked'),post.post_id);
                                                                                                         };   
@@ -123,7 +135,9 @@ function sent_post(){
                                           })
                     })
     .then(response => response.json())
-    .then(result => {console.log(result)})
+    .then(result => {console.log(result);
+                     document.querySelector('#post-body').value = '';
+                    })
     .catch(error => {
         console.error('Error:', error);
         alert('The post could not be sent. Try again.');

@@ -1,24 +1,17 @@
 {% extends "network/layout.html" %}
 {% load static %}
 {% block body %}
-    <div class="container-fluid">
-        <div class="row g-0">
-            <div class="col-12 col-md-4">  <!-- 4 columnas en md+ -->
-                <div id="new-post">
-                    <h3>New Post</h3>
-                    <form id="post-form">
+    <div class="container col-8 px-3">
+            {% if user.is_authenticated %}
+                <div id="new-post" >
+                    <form id="post-form" >
                         <textarea class="form-control" id="post-body" rows="3" placeholder="What's on your mind?"></textarea>
                         <button type="submit" class="btn btn-primary mt-2" id='sent_post'>Post</button>
                     </form>
                 </div>
-            </div>
-            <div class="col-12 col-md-8 border">  <!-- 8 columnas en md+ -->
+            {% endif %}
                 <div id="main"></div>
-                <div id = "pagination"> 
-                    
-                </div>
-            </div>
-        </div>
+                <div id = "pagination"></div>
     </div>
 {% endblock %}
 {% block script %}

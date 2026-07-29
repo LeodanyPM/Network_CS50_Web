@@ -124,13 +124,18 @@ def edit_post(request):
     else:
         return JsonResponse({"error": "You cannot edit other users' posts."}, status=400)    
         
-@login_required    
+
 def all_post(request):
     if request.method != 'GET':
         return JsonResponse({'error':"GET request required."}, status=400)
-    all_posts = Post.objects.annotate( user_liked = Exists( Like.objects.filter(post=OuterRef('pk'), user=request.user)))
-    post_page =paginate_posts(all_posts, request)
-    serialized_posts = [post.serialize(post.user == request.user, post.user_liked) for post in post_page['page_obj']]
+    if request.user.is_authenticated:
+        all_posts = Post.objects.annotate( user_liked = Exists( Like.objects.filter(post=OuterRef('pk'), user=request.user)))
+        post_page =paginate_posts(all_posts, request)
+        serialized_posts = [post.serialize(post.user == request.user, post.user_liked) for post in post_page['page_obj']]
+    else:
+        all_posts = Post.objects.all()
+        post_page = paginate_posts(all_posts, request)
+        serialized_posts = [post.serialize(False, False) for post in post_page['page_obj']]
     return JsonResponse({
         'posts': serialized_posts,
         'pagination': post_page['pagination']
