@@ -62,7 +62,7 @@ function show_posts(post){
                     const one_post = document.createElement('div');
                     one_post.className = 'border';
                     one_post.innerHTML =`<div> <a href=# data-user_id=${post.id} class='user_link'  >${post.user}</a> <div> ${post.date}</div></div>
-                                         ${post.is_owner ? '<button data-post_id=${post.post_id} class="btn_edit"> Edit </button>' : ''}
+                                         ${post.is_owner ? `<button data-post_id=${post.post_id} class="btn_edit"> Edit </button>` : ''}
                                          <div class= "body">${post.body}</div>
                                          <button class='btn_liked' data-liked =${ post.user_liked}> ${ post.user_liked ? '️♥️' : '🤍'} <span class="likes-count">${post.likes}</span></button>`;
                     main.append(one_post);
@@ -83,6 +83,9 @@ function show_posts(post){
                                                          if (e.target.classList.contains('btn_edit')) { console.log('click on edit');
                                                                                                         e.preventDefault();
                                                                                                         e.target.style.display = 'none';
+                                                                                                        document.querySelectorAll('.btn_edit').forEach( btn => {
+                                                                                                                                                btn.disabled = true;}
+                                                                                                                                                      );
                                                                                                         edit_post(one_post.querySelector('.body'), post.post_id, e.target);
                                                                                                         }; 
                                                             
@@ -162,6 +165,9 @@ function edit_post(post, id, edit_button){
                                                 .then(result => {console.log(result);
                                                                  edit_button.style.display = 'block';
                                                                  post.innerHTML = result.body;
+                                                                 document.querySelectorAll('.btn_edit').forEach( btn => {
+                                                                                                        btn.disabled = false;}
+                                                                                                               );
                                                                 })
                                                 .catch(error => {console.error('Error:', error);
                                                                  alert('The post could not be edit. Try again.');

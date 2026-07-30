@@ -171,7 +171,7 @@ def profile(request, id = None):
     posts = posts.annotate(user_liked = Exists(Like.objects.filter(post=OuterRef('pk'), user = request.user)))
     post_page =paginate_posts(posts, request)    
     serialized_posts = [post.serialize(is_owner, post.user_liked) for post in post_page['page_obj'] ]
-    user = User.objects.annotate(followers_count=Count('followers'), following_count=Count('following')).get(id=id_user)
+    user = User.objects.annotate(followers_count=Count('followers', distinct=True), following_count=Count('following', distinct=True)).get(id=id_user)
     info = {
         'username': user_name,
         'id':id_user,
