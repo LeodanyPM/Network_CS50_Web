@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
-
+ 
   
   document.querySelector('#all_posts').addEventListener('click',(e) => {
                                              e.preventDefault();
-                                             document.querySelector('#post-form').style.display='block';
+                                             //document.querySelector('#post-form').style.display='block';
 	                                         get_info('all_posts');
 	                                                });
   document.addEventListener('click', (e) => {
@@ -104,8 +104,8 @@ function page_user(data){
                         const info = document.createElement('div');
                         info.className= 'border';
                         info.innerHTML = `<div> <strong> User: </strong> ${info_user.username}</div>
-                                          <div> <strong> Following: </strong> ${info_user.following} </div>
-                                          <div> <strong> Followers </strong> ${info_user.followers} </div>
+                                          <div> <strong> Following: </strong> <span id='following'>${info_user.following}</span> </div>
+                                          <div> <strong> Followers </strong> <span id='followers'>${info_user.followers} </span> </div>
                                           `;
                        if(info_user.relation != 'Self' ){
                           const btn_follow = document.createElement('button');
@@ -120,9 +120,11 @@ function page_user(data){
                                                                                                                    fetch(`/follow/${info_user.id}`, { method:`${info_user.relation == 'Not Following' ? 'POST': 'DELETE'}` })
                                                                                                                    .then(r => r.json())
                                                                                                                    .then(data => console.log(data.message));
-                                                                                                                   btn_follow = document.querySelector('.btn_follow')
+                                                                                                                   btn_follow = document.querySelector('.btn_follow');
                                                                                                                    btn_follow.textContent = info_user.relation == 'Not Following'? 'Following' : 'Follow' ;
                                                                                                                    btn_follow.className = info_user.relation == 'Not Following' ? 'btn btn-primary btn_follow' : 'btn btn-outline-primary btn_follow';
+                                                                                                                   const count_follwers = parseInt(document.querySelector('#followers').textContent);
+                                                                                                                   document.querySelector('#followers').textContent = info_user.relation == 'Not Following' ? count_follwers + 1 : count_follwers - 1;
                                                                                                                    info_user.relation = info_user.relation === 'Not Following'? 'Following' : 'Not Following' ;
                                                                                                                };
                                                                     });

@@ -92,7 +92,7 @@ def post(request):
         return JsonResponse({"error": "POST request required."}, status=400)
     user = request.user
     body = json.loads(request.body).get('body')    
-    if not body or body.strip() =="":
+    if not body or not body.strip():
          return JsonResponse({"error":"Debes escribir algo"}, status=400)
     try:
         Post.objects.create(user=user, body=body)
@@ -112,7 +112,7 @@ def edit_post(request):
     data = json.loads(request.body)
     body = data.get('body')
     id = data.get('id')
-    if not body or body.strip() == "":
+    if not body or not body.strip():
         return JsonResponse({"error":"The post was not edited" },status=400)
     post = Post.objects.get(id=id)
     if request.user.id == post.user_id:
@@ -158,7 +158,7 @@ def profile(request, id = None):
             relation = 'Self'
         else:
             is_owner = False
-            if User.objects.get(id = id) in request.user.following.all():
+            if request.user.following.filter(id=id).exists():
                 relation ='Following'
             else:
                 relation = 'Not Following'
