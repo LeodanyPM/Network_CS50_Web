@@ -92,7 +92,7 @@ def post(request):
         return JsonResponse({"error": "POST request required."}, status=400)
     user = request.user
     body = json.loads(request.body).get('body')    
-    if body =="":
+    if not body or body.strip() =="":
          return JsonResponse({"error":"Debes escribir algo"}, status=400)
     try:
         Post.objects.create(user=user, body=body)
@@ -112,7 +112,7 @@ def edit_post(request):
     data = json.loads(request.body)
     body = data.get('body')
     id = data.get('id')
-    if body == "":
+    if not body or body.strip() == "":
         return JsonResponse({"error":"The post was not edited" },status=400)
     post = Post.objects.get(id=id)
     if request.user.id == post.user_id:
@@ -146,7 +146,11 @@ def profile(request, id = None):
     if request.method != 'GET':
         return JsonResponse({'error':"GET request required."}, status=400)
     if id is not None:
-        posts = Post.objects.filter(user__id = id)
+        try:
+            target_user = User.objects.get(id=id)
+        except User.DoesNotExist:
+            return JsonResponse({'error': "User not found."}, status=404)
+        posts = Post.objects.filter(user = target_user)
         user_name = User.objects.get(id=id).username
         id_user = id
         if id == request.user.id:
@@ -164,11 +168,10 @@ def profile(request, id = None):
         posts = Post.objects.filter(user = request.user)
         is_owner = True
         relation = 'Self'
-    data = []
     posts = posts.annotate(user_liked = Exists(Like.objects.filter(post=OuterRef('pk'), user = request.user)))
     post_page =paginate_posts(posts, request)    
     serialized_posts = [post.serialize(is_owner, post.user_liked) for post in post_page['page_obj'] ]
-    user = User.objects.annotate(followers_count=Count('followers'), following_count=Count('following')).get(id=request.user.id)
+    user = User.objects.annotate(followers_count=Count('followers'), following_count=Count('following')).get(id=id_user)
     info = {
         'username': user_name,
         'id':id_user,
@@ -176,14 +179,15 @@ def profile(request, id = None):
         'following': user.following_count,
         'relation': relation
     }
-    data.append(serialized_posts)
-    data.append(info)
-    data.append(post_page['pagination'])
-    return JsonResponse(data,safe=False)
+    return JsonResponse({
+                            'posts': serialized_posts,
+                            'user_info': info,
+                            'pagination': post_page['pagination']
+                        },safe=False)
  
 @login_required     
 def following(request):
-    if request.method == 'Get':
+    if request.method != 'GET':
         return JsonResponse({'error':'GET request required.'}, status=400)
     user_f = request.user.following.all()
     posts = Post.objects.filter(user__in = user_f)

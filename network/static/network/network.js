@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                             if(userLink){
                                                                  e.preventDefault();
                                                                  document.querySelector('#post-form').style.display='none';
-	                                                             get_info('page');
+	                                                             get_info('profile');
 	                                                      }
                                             });
   document.addEventListener('click',(e) => {
@@ -37,20 +37,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function get_info(section, page=1){
     const main = document.querySelector('#main');
-    main.innerHTML = `${section}`;
+    main.innerHTML = '';
     console.log(section);
-    
     fetch(`/${section}?page=${page}`)
     .then(response => response.json())
     .then(data => {
                     console.log(data);
-                    if (section != 'page'){
+                    if (section === 'all_posts' || section === 'following'){
                                         data.posts.forEach(post => show_posts(post));
                                         pagination(section, data.pagination);
                                         }
                     else { 
                            page_user(data);
-                           pagination(section, data[2]);
+                           pagination(section, data.pagination);
                           }                    
                     })
     .catch(error => {
@@ -69,13 +68,15 @@ function show_posts(post){
                     main.append(one_post);
                     one_post.addEventListener('click', (e) =>{
                                                          if(e.target.classList.contains('user_link')){
-                                                                                                main.innerHTML='';
                                                                                                 e.preventDefault();
+                                                                                                document.querySelector('#post-form').style.display='none';
+                                                                                                main.innerHTML='';
                                                                                                 const user = e.target.dataset.user_id;
-                                                                                                fetch(`/page/${user}`)
+                                                                                                fetch(`/profile/${user}`)
                                                                                                 .then(response => response.json())
                                                                                                 .then(data => {
                                                                                                                page_user(data)
+                                                                                                               pagination(`profile/${user}`, data.pagination)
                                                                                                                });
                                                             
                                                                                                     };
@@ -93,10 +94,9 @@ function show_posts(post){
                      
                      }
 function page_user(data){
-                        console.log(data);
-                        info_user = data[1];
+                        info_user = data.user_info;
+                        console.log('info');
                         console.log(info_user);
-                        console.log(data);
                         const main = document.querySelector('#main');
                         const info = document.createElement('div');
                         info.className= 'border';
@@ -124,7 +124,7 @@ function page_user(data){
                                                                                                                };
                                                                     });
                         main.append(info);                        
-                        data[0].forEach(post => show_posts(post));
+                        data.posts.forEach(post => show_posts(post));
                         
                         }                     
 function sent_post(){
