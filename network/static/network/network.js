@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if(sent_post_btn){
                    sent_post_btn.onclick =  function(e) {
                                                         e.preventDefault();
-                                                        console.log('Click en post');
+                                                        console.log('Click sent post');
                                                         sent_post();
                                                         get_info('all_posts');
                                                         };
@@ -45,7 +45,6 @@ function get_info(section, page=1){
     fetch(`/${section}?page=${page}`)
     .then(response => response.json())
     .then(data => {
-                    console.log(data);
                     if (section === 'all_posts' || section === 'following'){
                                         data.posts.forEach(post => show_posts(post));
                                         pagination(section, data.pagination);
@@ -88,7 +87,7 @@ function show_posts(post){
                                                                                                                });
                                                             
                                                                                                     };
-                                                         if (e.target.closest('.btn_edit')) { console.log('click on edit');
+                                                         if (e.target.closest('.btn_edit')) {           console.log('click on edit');
                                                                                                         e.preventDefault();
                                                                                                         e.target.style.display = 'none';
                                                                                                         document.querySelectorAll('.btn_edit').forEach( btn => {
@@ -106,8 +105,6 @@ function show_posts(post){
                      }
 function page_user(data){
                         info_user = data.user_info;
-                        console.log('info');
-                        console.log(info_user);
                         const main = document.querySelector('#main');
                         const info = document.createElement('div');
                         info.className= 'user-profile';
@@ -127,7 +124,6 @@ function page_user(data){
                                           
                        info.addEventListener('click', function (e) {
                                                                     if (e.target.classList.contains('btn_follow')){
-                                                                                                                   console.log(`${info_user.id}`);
                                                                                                                    fetch(`/follow/${info_user.id}`, { method:`${info_user.relation == 'Not Following' ? 'POST': 'DELETE'}` })
                                                                                                                    .then(r => r.json())
                                                                                                                    .then(data => console.log(data.message));
@@ -170,13 +166,12 @@ function edit_post(post, id, edit_button){
     document.querySelector('#edit-form').addEventListener('submit', function(e){
                                                 e.preventDefault();
                                                 const new_body = document.querySelector('#edit-body').value.trim() ;
-                                                console.log(new_body);
                                                 fetch('/edit', {
                                                                 method: 'POST',
                                                                 body: JSON.stringify({body:new_body, id:id})
                                                                 })
                                                 .then(response => response.json())
-                                                .then(result => {console.log(result);
+                                                .then(result => {
                                                                  edit_button.style.display = 'block';
                                                                  post.innerHTML = result.body;
                                                                  document.querySelectorAll('.btn_edit').forEach( btn => {
@@ -193,7 +188,6 @@ function like_post(button, id){
                             const isLiked = button.dataset.liked === 'true';
                             const countSpan = button.querySelector('.likes-count');
                             let count = parseInt(countSpan.textContent);
-                            console.log(button);
                             if (isLiked) {
                                         count--;
                                         button.dataset.liked = 'false';
