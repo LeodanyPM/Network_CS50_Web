@@ -30,3 +30,44 @@ body {
     color: #6c757d;
     background-color: #f8f9fa;
 }
+/* CARTS POSTS */
+#main > div {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+/*header */
+#main > div > div:first-child {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.user_link {
+    color: #0d6efd;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.user_link:hover {
+    text-decoration: underline;
+}
+
+#main > div > div:first-child > div {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+/* body */
+.body {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 1rem 0;
+    word-wrap: break-word;
+}

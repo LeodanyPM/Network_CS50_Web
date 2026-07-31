@@ -64,20 +64,22 @@ function show_posts(post){
                     const main = document.querySelector('#main');
                     const one_post = document.createElement('div');
                     one_post.className = 'border';
-                    one_post.innerHTML =`<div> <a href=# data-user_id=${post.id} class='user_link'  >${post.user}</a> <div> ${post.date}</div></div>
+                    one_post.innerHTML =`<div> <a href=# data-user_id=${post.id} class='user_link'  ><i class="bi bi-person-circle me-1"></i>${post.user}</a> 
+                                         <div> ${post.date}</div></div>
                                          ${post.is_owner ? `<button data-post_id=${post.post_id} class="btn_edit"> Edit </button>` : ''}
                                          <div class= "body">${post.body}</div>
                                          <button class='btn_liked' data-liked =${ post.user_liked}> ${ post.user_liked ? '️♥️' : '🤍'} <span class="likes-count">${post.likes}</span></button>`;
                     main.append(one_post);
                     one_post.addEventListener('click', (e) =>{
-                                                         if(e.target.classList.contains('user_link')){
+                                                         const  user_link = e.target.closest('.user_link')
+                                                         if(user_link){
                                                                                                 e.preventDefault();
                                                                                                 const curren_userLink = document.querySelector('#user');
                                                                                                 if(curren_userLink){
                                                                                                             document.querySelector('#post-form').style.display='none';
                                                                                                                    };
                                                                                                 main.innerHTML='';
-                                                                                                const user = e.target.dataset.user_id;
+                                                                                                const user = user_link.dataset.user_id;
                                                                                                 fetch(`/profile/${user}`)
                                                                                                 .then(response => response.json())
                                                                                                 .then(data => {
