@@ -223,8 +223,10 @@ function pagination(section, info_page) {
                     
                     const ul = document.createElement('ul');
                     ul.className = 'pagination justify-content-center';
-                    ul.innerHTML = `  <li class = "${info_page.has_previous ? 'page-item' : 'page-item disabled'}"> <a class='page-link previous' href='#'>Previous </a></li>
-                                      <li class = "${info_page.has_next ? 'page-item' : 'page-item disabled'}"> <a class='page-link next' href='#'> Next </a></li>`;
+                    ul.innerHTML = `  <li class = "${info_page.has_previous ? 'page-item' : 'page-item disabled'}"> <a class='page-link previous' href='#'>
+                                                    <i class="bi bi-chevron-left me-1"></i>Previous </a></li>
+                                      <li class = "${info_page.has_next ? 'page-item' : 'page-item disabled'}"> <a class='page-link next' href='#'> 
+                                                    Next<i class="bi bi-chevron-right ms-1"></i> </a></li>`;
                     div_pagination.append(ul);
                     div_pagination.style.display = info_page.total_pages > 1 ? 'block' : 'none' ;
                     ul.addEventListener('click', (e) => {
