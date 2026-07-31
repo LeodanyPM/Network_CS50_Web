@@ -71,3 +71,29 @@ body {
     margin: 1rem 0;
     word-wrap: break-word;
 }
+/* LIKE BUTTON */
+.btn_liked {
+    background: transparent;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    font-size: 1rem;
+    color: #6c757d;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+}
+
+.btn_liked:hover {
+    color: #dc3545;
+}
+
+.btn_liked[data-liked="true"] {
+    color: #dc3545;
+}
+
+.btn_liked .likes-count {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
