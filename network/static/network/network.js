@@ -3,7 +3,10 @@ document.addEventListener('DOMContentLoaded', function() {
   
   document.querySelector('#all_posts').addEventListener('click',(e) => {
                                              e.preventDefault();
-                                             //document.querySelector('#post-form').style.display='block';
+                                             const userLink = document.querySelector('#user');
+                                             if(userLink){
+                                                       document.querySelector('#post-form').style.display='block';
+                                                          };
 	                                         get_info('all_posts');
 	                                                });
   document.addEventListener('click', (e) => {
@@ -69,7 +72,10 @@ function show_posts(post){
                     one_post.addEventListener('click', (e) =>{
                                                          if(e.target.classList.contains('user_link')){
                                                                                                 e.preventDefault();
-                                                                                                document.querySelector('#post-form').style.display='none';
+                                                                                                const curren_userLink = document.querySelector('#user');
+                                                                                                if(curren_userLink){
+                                                                                                            document.querySelector('#post-form').style.display='none';
+                                                                                                                   };
                                                                                                 main.innerHTML='';
                                                                                                 const user = e.target.dataset.user_id;
                                                                                                 fetch(`/profile/${user}`)
@@ -107,7 +113,7 @@ function page_user(data){
                                           <div> <strong> Following: </strong> <span id='following'>${info_user.following}</span> </div>
                                           <div> <strong> Followers </strong> <span id='followers'>${info_user.followers} </span> </div>
                                           `;
-                       if(info_user.relation != 'Self' ){
+                       if(info_user.relation == 'Not Following' || info_user.relation == 'Following'  ){
                           const btn_follow = document.createElement('button');
                           btn_follow.className = `${info_user.relation == 'Not Following' ? 'btn btn-outline-primary btn_follow' : 'btn btn-primary btn_follow'}`;
                           btn_follow.textContent = `${info_user.relation == 'Not Following' ? 'Follow': 'Following'}`;

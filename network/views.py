@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 import json
-from django.db.models import Count,  Exists, OuterRef
+from django.db.models import Count,  Exists, OuterRef, Value, BooleanField
 from .models import User, Post, Like
 
 
@@ -140,11 +140,12 @@ def all_post(request):
         'posts': serialized_posts,
         'pagination': post_page['pagination']
         }, safe=False)
-
-@login_required      
+   
 def profile(request, id = None):
     if request.method != 'GET':
         return JsonResponse({'error':"GET request required."}, status=400)
+     
+    
     if id is not None:
         try:
             target_user = User.objects.get(id=id)
@@ -153,7 +154,10 @@ def profile(request, id = None):
         posts = Post.objects.filter(user = target_user)
         user_name = User.objects.get(id=id).username
         id_user = id
-        if id == request.user.id:
+        if not request.user.is_authenticated:
+            is_owner = False
+            relation = 'AnonymousUser'
+        elif id == request.user.id:
             is_owner = True
             relation = 'Self'
         else:
@@ -168,7 +172,11 @@ def profile(request, id = None):
         posts = Post.objects.filter(user = request.user)
         is_owner = True
         relation = 'Self'
-    posts = posts.annotate(user_liked = Exists(Like.objects.filter(post=OuterRef('pk'), user = request.user)))
+    
+    if not request.user.is_authenticated:
+        posts = posts.annotate(user_liked = Value(False, output_field=BooleanField()))
+    else:
+        posts = posts.annotate(user_liked = Exists(Like.objects.filter(post=OuterRef('pk'), user = request.user)))
     post_page =paginate_posts(posts, request)    
     serialized_posts = [post.serialize(is_owner, post.user_liked) for post in post_page['page_obj'] ]
     user = User.objects.annotate(followers_count=Count('followers', distinct=True), following_count=Count('following', distinct=True)).get(id=id_user)
