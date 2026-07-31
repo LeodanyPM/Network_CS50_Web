@@ -162,21 +162,16 @@ body {
     font-size: 0.75rem;
 }
 
-.btn-follow {
-    padding: 0.1rem 0.4rem;
-    font-size: 0.9rem;
+.btn_follow {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
     border-radius: 6px;
     border: 1px solid #0d6efd;
     cursor: pointer;
-    margin-left: 0.5rem;
+    transition: all 0.2s;
 }
 
-.btn-follow-outline {
-    background: transparent;
-    color: #0d6efd;
-}
-
-.btn-follow-filled {
-    background: #0d6efd;
-    color: white;
+.btn_follow:hover {
+    opacity: 0.8;
+    transform: translateY(-1px);
 }
