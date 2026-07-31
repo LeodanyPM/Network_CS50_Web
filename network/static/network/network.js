@@ -110,16 +110,19 @@ function page_user(data){
                         console.log(info_user);
                         const main = document.querySelector('#main');
                         const info = document.createElement('div');
-                        info.className= 'border';
-                        info.innerHTML = `<div> <strong> User: </strong> ${info_user.username}</div>
-                                          <div> <strong> Following: </strong> <span id='following'>${info_user.following}</span> </div>
-                                          <div> <strong> Followers </strong> <span id='followers'>${info_user.followers} </span> </div>
-                                          `;
+                        info.className= 'user-profile';
+                        info.innerHTML = `<div class="profile-name">
+                                            <i class="bi bi-person-circle"></i> ${info_user.username}
+                                        </div>
+                                        <div class="profile-stats">
+                                            <span class="stat">${info_user.following} <small>Following</small></span>
+                                            <span class="stat"><span id="followers">${info_user.followers}</span> <small>Followers</small></span>
+                                        </div>`;
                        if(info_user.relation == 'Not Following' || info_user.relation == 'Following'  ){
                           const btn_follow = document.createElement('button');
-                          btn_follow.className = `${info_user.relation == 'Not Following' ? 'btn btn-outline-primary btn_follow' : 'btn btn-primary btn_follow'}`;
+                          btn_follow.className = `${info_user.relation == 'Not Following' ? 'btn btn-outline-primary btn_follow btn-sm' : 'btn btn-primary btn-sm btn_follow'}`;
                           btn_follow.textContent = `${info_user.relation == 'Not Following' ? 'Follow': 'Following'}`;
-                          info.appendChild(btn_follow);                  
+                          info.querySelector('.profile-stats').appendChild(btn_follow);                 
                           };                   
                                           
                        info.addEventListener('click', function (e) {
@@ -130,7 +133,7 @@ function page_user(data){
                                                                                                                    .then(data => console.log(data.message));
                                                                                                                    btn_follow = document.querySelector('.btn_follow');
                                                                                                                    btn_follow.textContent = info_user.relation == 'Not Following'? 'Following' : 'Follow' ;
-                                                                                                                   btn_follow.className = info_user.relation == 'Not Following' ? 'btn btn-primary btn_follow' : 'btn btn-outline-primary btn_follow';
+                                                                                                                   btn_follow.className = info_user.relation == 'Not Following' ? 'btn btn-primary btn_follow btn-sm' : 'btn btn-outline-primary btn_follow btn-sm';
                                                                                                                    const count_follwers = parseInt(document.querySelector('#followers').textContent);
                                                                                                                    document.querySelector('#followers').textContent = info_user.relation == 'Not Following' ? count_follwers + 1 : count_follwers - 1;
                                                                                                                    info_user.relation = info_user.relation === 'Not Following'? 'Following' : 'Not Following' ;
