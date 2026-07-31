@@ -66,9 +66,9 @@ function show_posts(post){
                     one_post.className = 'border';
                     one_post.innerHTML =`<div> <a href=# data-user_id=${post.id} class='user_link'  ><i class="bi bi-person-circle me-1"></i>${post.user}</a> 
                                          <div> ${post.date}</div></div>
-                                         ${post.is_owner ? `<button data-post_id=${post.post_id} class="btn_edit"> Edit </button>` : ''}
                                          <div class= "body">${post.body}</div>
-                                         <button class='btn_liked' data-liked =${ post.user_liked}> ${ post.user_liked ? '️♥️' : '🤍'} <span class="likes-count">${post.likes}</span></button>`;
+                                         <button class='btn_liked' data-liked =${ post.user_liked}> ${ post.user_liked ? '️♥️' : '🤍'} <span class="likes-count">${post.likes}</span></button>
+                                         ${post.is_owner ? `<button data-post_id=${post.post_id} class="btn_edit"  title="Edit"> <i class="bi bi-pencil-square text-primary me-2"></i> </button>` : ''}`;
                     main.append(one_post);
                     one_post.addEventListener('click', (e) =>{
                                                          const  user_link = e.target.closest('.user_link')
@@ -88,7 +88,7 @@ function show_posts(post){
                                                                                                                });
                                                             
                                                                                                     };
-                                                         if (e.target.classList.contains('btn_edit')) { console.log('click on edit');
+                                                         if (e.target.closest('.btn_edit')) { console.log('click on edit');
                                                                                                         e.preventDefault();
                                                                                                         e.target.style.display = 'none';
                                                                                                         document.querySelectorAll('.btn_edit').forEach( btn => {
@@ -160,7 +160,8 @@ function edit_post(post, id, edit_button){
     const body = post.textContent ; 
     post.innerHTML =` <form id="edit-form">
                           <textarea class="form-control" id="edit-body" rows="3" > ${body} </textarea>
-                         <button type="submit" class="btn btn-primary mt-2" id='edit_post'>Edit</button>
+                         <button type="submit" class="btn btn-primary btn-sm mt-2" id='edit_post'>
+                         <i class="bi bi-check-lg me-1"></i>Save</button>
                       </form>`;
       
     document.querySelector('#edit-form').addEventListener('submit', function(e){
