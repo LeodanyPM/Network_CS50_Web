@@ -46,8 +46,15 @@ function get_info(section, page=1){
     .then(response => response.json())
     .then(data => {
                     if (section === 'all_posts' || section === 'following'){
-                                        data.posts.forEach(post => show_posts(post));
-                                        pagination(section, data.pagination);
+                                        if(data.posts.length === 0) {
+                                            main.className = 'text-center';
+                                            main.innerHTML = '<p class="display-1 text-muted text-center mb-3">📦</p>';
+                                            pagination(section, data.pagination);                        
+                                                                    }
+                                            
+                                        else {
+                                            data.posts.forEach(post => show_posts(post));
+                                            pagination(section, data.pagination);}
                                         }
                     else { 
                            page_user(data);
